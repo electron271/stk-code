@@ -554,7 +554,7 @@ void ServerLobby::writePlayerReport(Event* event)
         packet2.success = 1;
         packet2.reported_name = reporting_npp->getName();
         packet2.toNetworkString(ns);
-        event->getPeer()->sendPacket(ns, PRM_RELIABLE);
+        event->getPeer()->sendNetstring(ns, PRM_RELIABLE);
         delete ns;
     }
 #endif
@@ -1033,7 +1033,7 @@ void ServerLobby::rejectLiveJoin(std::shared_ptr<STKPeer> peer, BackLobbyReason 
     BackLobbyPacket packet1;
     packet1.reason = blr;
     packet1.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 
     updatePlayerList();
@@ -1043,7 +1043,7 @@ void ServerLobby::rejectLiveJoin(std::shared_ptr<STKPeer> peer, BackLobbyReason 
     //packet2.server_info = ...;
     m_game_setup->addServerInfo(ns2);
     packet2.toNetworkString(ns2);
-    peer->sendPacket(ns2, PRM_RELIABLE);
+    peer->sendNetstring(ns2, PRM_RELIABLE);
     delete ns2;
 }   // rejectLiveJoin
 
@@ -1121,7 +1121,7 @@ void ServerLobby::liveJoinRequest(Event* event)
     NetworkString* ns;
     LoadWorldPacket load_world_packet = getLoadWorldMessage(players, true/*live_join*/);
     load_world_packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 
     peer->updateLastActivity();
@@ -1307,7 +1307,7 @@ void ServerLobby::finishedLoadingLiveJoinClient(Event* event)
     peer->setSpectator(spectator);
 
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
     updatePlayerList();
     peer->updateLastActivity();
@@ -1477,7 +1477,7 @@ void ServerLobby::update(int ticks)
             BackLobbyPacket packet;
             packet.reason = BLR_NONE;
             packet.toNetworkString(ns);
-            ai->sendPacket(ns, PRM_RELIABLE);
+            ai->sendNetstring(ns, PRM_RELIABLE);
             delete ns;
         }
         if (all_players_in_world_disconnected)
@@ -1755,7 +1755,7 @@ void ServerLobby::startSelection(const Event *event)
                 NetworkString* ns = getNetworkString();
                 BadTeamPacket packet;
                 packet.toNetworkString(ns);
-                event->getPeer()->sendPacket(ns, PRM_RELIABLE);
+                event->getPeer()->sendNetstring(ns, PRM_RELIABLE);
                 delete ns;
             }
             return;
@@ -1919,7 +1919,7 @@ void ServerLobby::startSelection(const Event *event)
         packet.assets = getAssetManager()->encodePlayerKartsAndCommonMaps(all_k);
         packet.toNetworkString(ns);
 
-        peer->sendPacket(ns, PRM_RELIABLE);
+        peer->sendNetstring(ns, PRM_RELIABLE);
         delete ns;
 
         if (getQueues()->areKartFiltersIgnoringKarts())
@@ -2227,7 +2227,7 @@ void ServerLobby::kickPlayerWithReason(std::shared_ptr<STKPeer> peer, const char
     packet.reason = RR_BANNED;
     packet.message = reason;
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+    peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
     
     peer->cleanPlayerProfiles();
     peer->reset();
@@ -2278,7 +2278,7 @@ bool ServerLobby::handleAssetsAndAddonScores(std::shared_ptr<STKPeer> peer,
             packet.reason = RR_INCOMPATIBLE_DATA;
             packet.message = getSettings()->getIncompatibleAdvice();
             packet.toNetworkString(ns);
-            peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+            peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
 
             peer->cleanPlayerProfiles();
             peer->reset();
@@ -2329,7 +2329,7 @@ void ServerLobby::connectionRequested(Event* event)
         packet.reason = RR_BUSY;
         packet.toNetworkString(ns);
         // send only to the peer that made the request and disconnect it now
-        peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+        peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
         delete ns;
 
         peer->reset();
@@ -2349,7 +2349,7 @@ void ServerLobby::connectionRequested(Event* event)
         ConnectionRefusedPacket packet;
         packet.reason = RR_INCOMPATIBLE_DATA;
         packet.toNetworkString(ns);
-        peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+        peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
         delete ns;
 
         peer->reset();
@@ -2411,7 +2411,7 @@ void ServerLobby::connectionRequested(Event* event)
         ConnectionRefusedPacket packet;
         packet.reason = RR_TOO_MANY_PLAYERS;
         packet.toNetworkString(ns);
-        peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+        peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
         delete ns;
 
         peer->reset();
@@ -2454,7 +2454,7 @@ void ServerLobby::connectionRequested(Event* event)
         ConnectionRefusedPacket packet;
         packet.reason = RR_INVALID_PLAYER;
         packet.toNetworkString(ns);
-        peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+        peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
         delete ns;
 
         peer->reset();
@@ -2502,7 +2502,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             packet.reason = RR_BANNED;
             packet.message = "Please behave well next time.";
             packet.toNetworkString(ns);
-            peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+            peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
             delete ns;
 
             peer->reset();
@@ -2518,7 +2518,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
         ConnectionRefusedPacket packet;
         packet.reason = RR_INCORRECT_PASSWORD;
         packet.toNetworkString(ns);
-        peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+        peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
         delete ns;
 
         peer->reset();
@@ -2541,7 +2541,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             ConnectionRefusedPacket packet;
             packet.reason = RR_TOO_MANY_PLAYERS;
             packet.toNetworkString(ns);
-            peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+            peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
             delete ns;
 
             peer->reset();
@@ -2559,7 +2559,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             ConnectionRefusedPacket packet;
             packet.reason = RR_INVALID_PLAYER;
             packet.toNetworkString(ns);
-            peer->sendPacket(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
+            peer->sendNetstring(ns, PRM_RELIABLE, PEM_UNENCRYPTED);
             delete ns;
 
             peer->reset();
@@ -2653,8 +2653,8 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
 
     // send a message to the one that asked to connect
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
-    peer->sendPacket(si);
+    m_game_setup->addServerInfo().toNetworkString(si);
+    peer->sendNetstring(si);
     delete si;
 
     const bool game_started = m_state.load() != WAITING_FOR_START_GAME;
@@ -2712,7 +2712,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
     {
         peer->setWaitingForGame(true);
         updatePlayerList();
-        peer->sendPacket(ns);
+        peer->sendNetstring(ns);
         delete ns;
     }
     else
@@ -2732,7 +2732,7 @@ void ServerLobby::handleUnencryptedConnection(std::shared_ptr<STKPeer> peer,
             }
         }
         updatePlayerList();
-        peer->sendPacket(ns);
+        peer->sendNetstring(ns);
         delete ns;
 
         if (getSettings()->isRanked())
@@ -2991,7 +2991,7 @@ void ServerLobby::updateServerOwner(bool force)
         NetworkString* ns = getNetworkString();
         ServerOwnershipPacket packet;
         packet.toNetworkString(ns);
-        owner->sendPacket(ns);
+        owner->sendNetstring(ns);
         delete ns;
     }
     m_server_owner = owner;
@@ -3419,7 +3419,7 @@ void ServerLobby::resetServer()
     updatePlayerList(true/*update_when_reset_server*/);
 
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
+    m_game_setup->addServerInfo().toNetworkString(si);
     Comm::sendMessageToPeersInServer(si);
     delete si;
     
@@ -3677,7 +3677,7 @@ void ServerLobby::handleServerConfiguration(std::shared_ptr<STKPeer> peer,
             ConnectionRefusedPacket packet;
             packet.reason = RR_INCOMPATIBLE_DATA;
             packet.toNetworkString(ns);
-            peer->sendPacket(ns, PRM_RELIABLE);
+            peer->sendNetstring(ns, PRM_RELIABLE);
             delete ns;
 
             peer->cleanPlayerProfiles();
@@ -3712,7 +3712,7 @@ void ServerLobby::handleServerConfiguration(std::shared_ptr<STKPeer> peer,
     }
 
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
+    m_game_setup->addServerInfo().toNetworkString(si);
     Comm::sendMessageToPeers(si);
     delete si;
 
@@ -4008,7 +4008,7 @@ void ServerLobby::handleKartInfo(Event* event)
         packet.kart_data = rki.getKartData().encode();
 
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 
 
@@ -4099,14 +4099,14 @@ void ServerLobby::clientInGameWantsToBackLobby(Event* event)
     BackLobbyPacket packet;
     packet.reason = BLR_NONE;
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 
     updatePlayerList();
 
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
-    peer->sendPacket(si, PRM_RELIABLE);
+    m_game_setup->addServerInfo().toNetworkString(si);
+    peer->sendNetstring(si, PRM_RELIABLE);
     delete si;
 }   // clientInGameWantsToBackLobby
 
@@ -4149,14 +4149,14 @@ void ServerLobby::clientSelectingAssetsWantsToBackLobby(Event* event)
     BackLobbyPacket packet;
     packet.reason = BLR_NONE;
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 
     updatePlayerList();
 
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
-    peer->sendPacket(si, PRM_RELIABLE);
+    m_game_setup->addServerInfo().toNetworkString(si);
+    peer->sendNetstring(si, PRM_RELIABLE);
     delete si;
 }   // clientSelectingAssetsWantsToBackLobby
 
@@ -4259,7 +4259,7 @@ void ServerLobby::writeOwnReport(std::shared_ptr<STKPeer> reporter, std::shared_
             packet.reported_name = reporting_npp->getName();
 
         packet.toNetworkString(ns);
-        reporter->sendPacket(ns, PRM_RELIABLE);
+        reporter->sendNetstring(ns, PRM_RELIABLE);
         delete ns;
     }
 #endif
@@ -4277,7 +4277,7 @@ void ServerLobby::sendStringToPeer(std::shared_ptr<STKPeer> peer, const std::str
     ChatPacket packet;
     packet.message = StringUtils::utf8ToWide(s);
     packet.toNetworkString(ns);
-    peer->sendPacket(ns, PRM_RELIABLE);
+    peer->sendNetstring(ns, PRM_RELIABLE);
     delete ns;
 }   // sendStringToPeer
 //-----------------------------------------------------------------------------
@@ -4489,19 +4489,10 @@ bool ServerLobby::playerReportsTableExists() const
 
 //-----------------------------------------------------------------------------
 
-ServerInfoPacket ServerLobby::getServerInfoPacket() const
-{
-    ServerInfoPacket packet;
-    packet.placeholder = 0;
-    // use m_game_setup->addServerInfo(server_info);
-    return packet;
-}   // getServerInfoPacket
-//-----------------------------------------------------------------------------
-
 void ServerLobby::sendServerInfoToEveryone() const
 {
     NetworkString* si = getNetworkString();
-    getServerInfoPacket().toNetworkString(si);
+    m_game_setup->addServerInfo().toNetworkString(si);
     Comm::sendMessageToPeers(si);
     delete si;
 }   // sendServerInfoToEveryone

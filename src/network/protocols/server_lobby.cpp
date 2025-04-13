@@ -2328,7 +2328,7 @@ void ServerLobby::connectionRequested(Event* event)
 {
     std::shared_ptr<STKPeer> peer = event->getPeerSP();
     auto conn_packet = event->getPacket<ConnectionRequestedPacket>();
-    if (!checkDataSize(event, 14)) return;
+    // if (!checkDataSize(event, 14)) return;
 
     peer->cleanPlayerProfiles();
 

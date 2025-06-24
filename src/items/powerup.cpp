@@ -33,6 +33,7 @@
 #include "network/network_config.hpp"
 #include "network/network_string.hpp"
 #include "network/rewind_manager.hpp"
+#include "network/server_config.hpp"
 #include "physics/triangle_mesh.hpp"
 #include "tracks/track.hpp"
 #include "utils/hit_processor.hpp"
@@ -592,7 +593,23 @@ void Powerup::hitBonusBox(const ItemState &item_state)
     if(m_type == PowerupManager::POWERUP_NOTHING ||
        stk_config->m_same_powerup_mode == STKConfig::POWERUP_MODE_NEW )
     {
-        set( new_powerup, n );
+        if (ServerConfig::m_item_override_num > 0)
+        {
+            n = ServerConfig::m_item_override_num;
+        }
+        else
+        {
+            // use operator std::string to get the override type
+            std::string override_type = static_cast<std::string>(ServerConfig::m_item_override_type);
+            if (!override_type.empty())
+            {
+                new_powerup = powerup_manager->getRandomPowerup(
+                    position, &n, random_number);
+                // override the powerup based on config
+                new_powerup = powerup_manager->getPowerupType(override_type);
+            }
+        }
+        set(new_powerup, n );
     }
     else
     {

@@ -806,6 +806,15 @@ namespace ServerConfig
         "Timeout in seconds during which you cannot start the next game, "
         "regardless of hammers, votes, or buttons pressed."));
 
+    SERVER_CFG_PREFIX IntServerConfigParam m_item_override_num
+        SERVER_CFG_DEFAULT(IntServerConfigParam(0, "item-override-num",
+        "Item quantity to override to. Set to 0 to disable."));
+    
+    SERVER_CFG_PREFIX StringServerConfigParam m_item_override_type
+        SERVER_CFG_DEFAULT(StringServerConfigParam("", "item-override-type",
+        "Item type to override to. Set to empty string to disable. "
+        "Possible values: bubblegum, cake, bowling, zipper, plunger, switch, swatter, rubber-ball, parachute, anchor"));
+
     // ========================================================================
     /** Server version, will be advanced if there are protocol changes. */
     static const uint32_t m_server_version = 6;

@@ -593,22 +593,19 @@ void Powerup::hitBonusBox(const ItemState &item_state)
     if(m_type == PowerupManager::POWERUP_NOTHING ||
        stk_config->m_same_powerup_mode == STKConfig::POWERUP_MODE_NEW )
     {
+        // override the count if requested
         if (ServerConfig::m_item_override_num > 0)
         {
             n = ServerConfig::m_item_override_num;
         }
-        else
+
+        // override the type if requested
+        std::string override_type = static_cast<std::string>(ServerConfig::m_item_override_type);
+        if (!override_type.empty())
         {
-            // use operator std::string to get the override type
-            std::string override_type = static_cast<std::string>(ServerConfig::m_item_override_type);
-            if (!override_type.empty())
-            {
-                new_powerup = powerup_manager->getRandomPowerup(
-                    position, &n, random_number);
-                // override the powerup based on config
-                new_powerup = powerup_manager->getPowerupType(override_type);
-            }
+            new_powerup = powerup_manager->getPowerupType(override_type);
         }
+
         set(new_powerup, n );
     }
     else

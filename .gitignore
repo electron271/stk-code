@@ -93,3 +93,5 @@ lib/astc-encoder
 lib/shaderc
 
 .DS_Store
+
+config.xml
